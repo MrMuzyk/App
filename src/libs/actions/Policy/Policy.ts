@@ -2526,7 +2526,7 @@ function createWorkspaceFromIOUPayment(iouReport: OnyxEntry<Report>): WorkspaceF
         value: {
             isLoading: false,
             achData: {
-                currentStep: CONST.BANK_ACCOUNT.STEP.BANK_ACCOUNT,
+                currentStep: CONST.USD_BANK_ACCOUNT.STEP.BANK_ACCOUNT,
                 policyID,
                 subStep: '',
             },

@@ -168,7 +168,7 @@ function getEligibleBankAccountsForCard(bankAccountsList: OnyxEntry<BankAccountL
     if (!bankAccountsList || isEmptyObject(bankAccountsList)) {
         return [];
     }
-    return Object.values(bankAccountsList).filter((bankAccount) => bankAccount?.accountData?.type === CONST.BANK_ACCOUNT.TYPE.BUSINESS && bankAccount?.accountData?.allowDebit);
+    return Object.values(bankAccountsList).filter((bankAccount) => bankAccount?.accountData?.type === CONST.USD_BANK_ACCOUNT.TYPE.BUSINESS && bankAccount?.accountData?.allowDebit);
 }
 
 function sortCardsByCardholderName(cardsList: OnyxEntry<WorkspaceCardsList>, personalDetails: OnyxEntry<PersonalDetailsList>): Card[] {

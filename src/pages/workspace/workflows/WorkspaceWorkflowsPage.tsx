@@ -14,6 +14,7 @@ import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import OfflineWithFeedback from '@components/OfflineWithFeedback';
 import Section from '@components/Section';
 import Text from '@components/Text';
+import useEnvironment from '@hooks/useEnvironment';
 import useLocalize from '@hooks/useLocalize';
 import useNetwork from '@hooks/useNetwork';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
@@ -84,6 +85,7 @@ function WorkspaceWorkflowsPage({policy, route}: WorkspaceWorkflowsPageProps) {
 
     const {isOffline} = useNetwork({onReconnect: fetchData});
     const isPolicyAdmin = PolicyUtils.isPolicyAdmin(policy);
+    const {isDevelopment} = useEnvironment();
 
     useFocusEffect(
         useCallback(() => {
@@ -225,6 +227,11 @@ function WorkspaceWorkflowsPage({policy, route}: WorkspaceWorkflowsPageProps) {
                                 description={getPaymentMethodDescription(CONST.PAYMENT_METHODS.BUSINESS_BANK_ACCOUNT, policy?.achAccount ?? {})}
                                 onPress={() => {
                                     if (!Policy.isCurrencySupportedForDirectReimbursement(policy?.outputCurrency ?? '')) {
+                                        if (isDevelopment) {
+                                            navigateToBankAccountRoute(route.params.policyID, ROUTES.WORKSPACE_WORKFLOWS.getRoute(route.params.policyID));
+                                            return;
+                                        }
+
                                         setIsCurrencyModalOpen(true);
                                         return;
                                     }
@@ -283,6 +290,7 @@ function WorkspaceWorkflowsPage({policy, route}: WorkspaceWorkflowsPageProps) {
         isPolicyAdmin,
         displayNameForAuthorizedPayer,
         route.params.policyID,
+        isDevelopment,
     ]);
 
     const renderOptionItem = (item: ToggleSettingOptionRowProps, index: number) => (

@@ -495,6 +495,28 @@ function isValidSubscriptionSize(subscriptionSize: string): boolean {
     return !Number.isNaN(parsedSubscriptionSize) && parsedSubscriptionSize > 0 && parsedSubscriptionSize <= CONST.SUBSCRIPTION_SIZE_LIMIT && Number.isInteger(parsedSubscriptionSize);
 }
 
+/**
+ * Validates the given value if it is correct ownership percentage.
+ */
+function isValidOwnershipPercentage(value: string, totalOwnedPercentage: Record<string, number>, ownerBeingModifiedID: string): boolean {
+    const parsedValue = Number(value);
+    const isValidNumber = !Number.isNaN(parsedValue) && parsedValue >= 25 && parsedValue <= 100;
+
+    let totalOwnedPercentageSum = 0;
+    const totalOwnedPercentageKeys = Object.keys(totalOwnedPercentage);
+    totalOwnedPercentageKeys.forEach((key) => {
+        if (key === ownerBeingModifiedID) {
+            return;
+        }
+
+        totalOwnedPercentageSum += totalOwnedPercentage[key];
+    });
+
+    const isTotalSumValid = totalOwnedPercentageSum + parsedValue <= 100;
+
+    return isValidNumber && isTotalSumValid;
+}
+
 export {
     meetsMinimumAgeRequirement,
     meetsMaximumAgeRequirement,
@@ -539,4 +561,5 @@ export {
     isValidSubscriptionSize,
     isExistingTaxCode,
     isPublicDomain,
+    isValidOwnershipPercentage,
 };
