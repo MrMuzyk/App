@@ -33,7 +33,7 @@ function Manual({onNext}: ManualProps) {
         [BANK_INFO_STEP_KEYS.ACCOUNT_NUMBER]: reimbursementAccount?.achData?.[BANK_INFO_STEP_KEYS.ACCOUNT_NUMBER] ?? '',
     };
 
-    const shouldBeReadOnlyInput = reimbursementAccount?.achData?.setupType === CONST.BANK_ACCOUNT.SETUP_TYPE.PLAID;
+    const shouldBeReadOnlyInput = reimbursementAccount?.achData?.setupType === CONST.USD_BANK_ACCOUNT.SETUP_TYPE.PLAID;
 
     const validate = useCallback(
         (values: FormOnyxValues<typeof ONYXKEYS.FORMS.REIMBURSEMENT_ACCOUNT_FORM>): FormInputErrors<typeof ONYXKEYS.FORMS.REIMBURSEMENT_ACCOUNT_FORM> => {
@@ -42,14 +42,14 @@ function Manual({onNext}: ManualProps) {
 
             if (
                 values.accountNumber &&
-                !CONST.BANK_ACCOUNT.REGEX.US_ACCOUNT_NUMBER.test(values.accountNumber.trim()) &&
-                !CONST.BANK_ACCOUNT.REGEX.MASKED_US_ACCOUNT_NUMBER.test(values.accountNumber.trim())
+                !CONST.USD_BANK_ACCOUNT.REGEX.US_ACCOUNT_NUMBER.test(values.accountNumber.trim()) &&
+                !CONST.USD_BANK_ACCOUNT.REGEX.MASKED_US_ACCOUNT_NUMBER.test(values.accountNumber.trim())
             ) {
                 errors.accountNumber = translate('bankAccount.error.accountNumber');
             } else if (values.accountNumber && values.accountNumber === routingNumber) {
                 errors.accountNumber = translate('bankAccount.error.routingAndAccountNumberCannotBeSame');
             }
-            if (routingNumber && (!CONST.BANK_ACCOUNT.REGEX.SWIFT_BIC.test(routingNumber) || !ValidationUtils.isValidRoutingNumber(routingNumber))) {
+            if (routingNumber && (!CONST.USD_BANK_ACCOUNT.REGEX.SWIFT_BIC.test(routingNumber) || !ValidationUtils.isValidRoutingNumber(routingNumber))) {
                 errors.routingNumber = translate('bankAccount.error.routingNumber');
             }
 

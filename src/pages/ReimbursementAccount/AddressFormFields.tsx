@@ -1,7 +1,9 @@
 import React from 'react';
 import {View} from 'react-native';
+import type {StyleProp, ViewStyle} from 'react-native';
 import AddressSearch from '@components/AddressSearch';
 import InputWrapper from '@components/Form/InputWrapper';
+import PushRowWithModal from '@components/PushRowWithModal';
 import type {State} from '@components/StateSelector';
 import StateSelector from '@components/StateSelector';
 import TextInput from '@components/TextInput';
@@ -30,18 +32,38 @@ type AddressFormProps = {
     errors?: AddressErrors;
 
     /** The map for inputID of the inputs */
-    inputKeys: Address;
+    inputKeys: Record<string, string>;
 
     /** Saves a draft of the input value when used in a form */
     shouldSaveDraft?: boolean;
+
+    /** Additional styles to apply to container */
+    containerStyles?: StyleProp<ViewStyle>;
+
+    /** Indicates if country selector should be displayed */
+    shouldDisplayCountrySelector?: boolean;
+
+    /** Indicates if state selector should be displayed */
+    shouldDisplayStateSelector?: boolean;
 };
 
-function AddressFormFields({shouldSaveDraft = false, defaultValues, values, errors, inputKeys, onFieldChange, streetTranslationKey}: AddressFormProps) {
+function AddressFormFields({
+    shouldSaveDraft = false,
+    defaultValues,
+    values,
+    errors,
+    inputKeys,
+    onFieldChange,
+    streetTranslationKey,
+    containerStyles,
+    shouldDisplayCountrySelector = false,
+    shouldDisplayStateSelector = true,
+}: AddressFormProps) {
     const {translate} = useLocalize();
     const styles = useThemeStyles();
 
     return (
-        <>
+        <View style={containerStyles}>
             <View>
                 <InputWrapper
                     InputComponent={AddressSearch}
@@ -55,7 +77,6 @@ function AddressFormFields({shouldSaveDraft = false, defaultValues, values, erro
                     errorText={errors?.street ? translate('bankAccount.error.addressStreet') : ''}
                     renamedInputKeys={inputKeys}
                     maxInputLength={CONST.FORM_CHARACTER_LIMIT}
-                    isLimitedToUSA
                 />
             </View>
             <InputWrapper
@@ -72,17 +93,19 @@ function AddressFormFields({shouldSaveDraft = false, defaultValues, values, erro
                 containerStyles={styles.mt6}
             />
 
-            <View style={[styles.mt3, styles.mhn5]}>
-                <InputWrapper
-                    InputComponent={StateSelector}
-                    inputID={inputKeys.state ?? 'stateInput'}
-                    shouldSaveDraft={shouldSaveDraft}
-                    value={values?.state as State}
-                    defaultValue={defaultValues?.state}
-                    onInputChange={(value) => onFieldChange?.({state: value})}
-                    errorText={errors?.state ? translate('bankAccount.error.addressState') : ''}
-                />
-            </View>
+            {shouldDisplayStateSelector && (
+                <View style={[styles.mt3, styles.mhn5]}>
+                    <InputWrapper
+                        InputComponent={StateSelector}
+                        inputID={inputKeys.state ?? 'stateInput'}
+                        shouldSaveDraft={shouldSaveDraft}
+                        value={values?.state as State}
+                        defaultValue={defaultValues?.state}
+                        onInputChange={(value) => onFieldChange?.({state: value})}
+                        errorText={errors?.state ? translate('bankAccount.error.addressState') : ''}
+                    />
+                </View>
+            )}
             <InputWrapper
                 InputComponent={TextInput}
                 inputID={inputKeys.zipCode ?? 'zipCodeInput'}
@@ -95,11 +118,28 @@ function AddressFormFields({shouldSaveDraft = false, defaultValues, values, erro
                 defaultValue={defaultValues?.zipCode}
                 onChangeText={(value) => onFieldChange?.({zipCode: value})}
                 errorText={errors?.zipCode ? translate('bankAccount.error.zipCode') : ''}
-                maxLength={CONST.BANK_ACCOUNT.MAX_LENGTH.ZIP_CODE}
+                maxLength={CONST.USD_BANK_ACCOUNT.MAX_LENGTH.ZIP_CODE}
                 hint={translate('common.zipCodeExampleFormat', {zipSampleFormat: CONST.COUNTRY_ZIP_REGEX_DATA.US.samples})}
                 containerStyles={styles.mt3}
             />
-        </>
+            {shouldDisplayCountrySelector && (
+                <View style={[styles.mt3, styles.mhn5]}>
+                    <InputWrapper
+                        InputComponent={PushRowWithModal}
+                        inputID={inputKeys?.country ?? 'country'}
+                        shouldSaveDraft={shouldSaveDraft}
+                        optionsList={CONST.ALL_COUNTRIES}
+                        selectedOption={defaultValues?.country ?? ''}
+                        onOptionChange={(value) => onFieldChange?.({[inputKeys?.country ?? 'country']: value})}
+                        description={translate('common.country')}
+                        modalHeaderTitle={translate('countryStep.selectCountry')}
+                        searchInputTitle={translate('countryStep.findCountry')}
+                        value={values?.country}
+                        defaultValue={defaultValues?.country}
+                    />
+                </View>
+            )}
+        </View>
     );
 }
 

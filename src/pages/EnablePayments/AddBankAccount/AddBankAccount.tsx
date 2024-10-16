@@ -36,7 +36,7 @@ function AddBankAccount() {
         }
     }, [personalBankAccountDraft?.plaidAccountID, plaidData?.bankAccounts]);
 
-    const isSetupTypeChosen = personalBankAccountDraft?.setupType === CONST.BANK_ACCOUNT.SETUP_TYPE.PLAID;
+    const isSetupTypeChosen = personalBankAccountDraft?.setupType === CONST.USD_BANK_ACCOUNT.SETUP_TYPE.PLAID;
 
     const {componentToRender: SubStep, isEditing, screenIndex, nextScreen, prevScreen, moveTo} = useSubStep({bodyContent: plaidSubsteps, startFrom: 0, onFinished: submit});
 
@@ -84,7 +84,7 @@ function AddBankAccount() {
             <View style={styles.flex1}>
                 {isSetupTypeChosen ? (
                     <>
-                        <View style={[styles.ph5, styles.mb5, styles.mt3, {height: CONST.BANK_ACCOUNT.STEPS_HEADER_HEIGHT}]}>
+                        <View style={[styles.ph5, styles.mb5, styles.mt3, {height: CONST.USD_BANK_ACCOUNT.STEPS_HEADER_HEIGHT}]}>
                             <InteractiveStepSubHeader
                                 startStepIndex={0}
                                 stepNames={CONST.WALLET.STEP_NAMES}

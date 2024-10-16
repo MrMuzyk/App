@@ -21,7 +21,7 @@ import StringUtils from './StringUtils';
 function validateCardNumber(value: string): boolean {
     let sum = 0;
     for (let i = 0; i < value.length; i++) {
-        let intVal = parseInt(value.substr(i, 1), 10);
+        let intVal = parseInt(value.slice(i, i + 1), 10);
         if (i % 2 === 0) {
             intVal *= 2;
             if (intVal > 9) {
@@ -495,6 +495,28 @@ function isValidSubscriptionSize(subscriptionSize: string): boolean {
     return !Number.isNaN(parsedSubscriptionSize) && parsedSubscriptionSize > 0 && parsedSubscriptionSize <= CONST.SUBSCRIPTION_SIZE_LIMIT && Number.isInteger(parsedSubscriptionSize);
 }
 
+/**
+ * Validates the given value if it is correct ownership percentage.
+ */
+function isValidOwnershipPercentage(value: string, totalOwnedPercentage: Record<string, number>, ownerBeingModifiedID: string): boolean {
+    const parsedValue = Number(value);
+    const isValidNumber = !Number.isNaN(parsedValue) && parsedValue >= 25 && parsedValue <= 100;
+
+    let totalOwnedPercentageSum = 0;
+    const totalOwnedPercentageKeys = Object.keys(totalOwnedPercentage);
+    totalOwnedPercentageKeys.forEach((key) => {
+        if (key === ownerBeingModifiedID) {
+            return;
+        }
+
+        totalOwnedPercentageSum += totalOwnedPercentage[key];
+    });
+
+    const isTotalSumValid = totalOwnedPercentageSum + parsedValue <= 100;
+
+    return isValidNumber && isTotalSumValid;
+}
+
 export {
     meetsMinimumAgeRequirement,
     meetsMaximumAgeRequirement,
@@ -539,4 +561,5 @@ export {
     isValidSubscriptionSize,
     isExistingTaxCode,
     isPublicDomain,
+    isValidOwnershipPercentage,
 };
